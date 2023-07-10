@@ -1,6 +1,5 @@
 
 import API from './js/cat-api';
-
 import Notiflix from 'notiflix';
 const refs = {
     select: document.querySelector('.breed-select'),
@@ -12,7 +11,6 @@ const refs = {
 
 refs.select.addEventListener('change', onSelectView);
 
-// API Fetch & Add options in select
 getOptions();
 
 function getOptions() {
