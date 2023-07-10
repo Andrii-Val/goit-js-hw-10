@@ -62,8 +62,6 @@ function onSelectView() {
     ' Oops! Something went wrong! Try reloading the page!'
   );
 }
-
-
  function showErrorFailure() {
   Notiflix.Report.failure(
     'Oops! Something went wrong! Try reloading the page!',

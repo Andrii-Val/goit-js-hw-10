@@ -15,7 +15,6 @@ function fetchBreeds() {
   });
 }
 
-// fetching cat by id(breed name)
 function fetchCatByBreed(breedId) {
   return fetch(
     `https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&api_key=${API_KEY}`
