@@ -1,16 +1,44 @@
-import API from './js/cat-api';
-import getRefs from './js/get-refs';
-import getOptions from './js/get-options';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const refs = getRefs();
+import API from './js/cat-api';
+
+import Notiflix from 'notiflix';
+const refs = {
+    select: document.querySelector('.breed-select'),
+    catContainer: document.querySelector('.cat-info'),
+    loading: document.querySelector('.loader'),
+    errorMessage: document.querySelector('.error'),
+    
+};
 
 refs.select.addEventListener('change', onSelectView);
 
 // API Fetch & Add options in select
 getOptions();
 
-// Fetching object with chosen breed and create markup
+function getOptions() {
+  API.fetchBreeds()
+  .then(getAllIds)
+  .catch(error => {
+    if (error) {
+      showErrorFailure();
+
+    }
+  });
+}
+function getAllIds(arr) {
+  const breedSelect = document.querySelector('.breed-select');
+
+  for (let i = 0; i < arr.length; i += 1) {
+    let value = arr[i].id;
+    let text = arr[i].name;
+
+    const optionsElement = document.createElement('option');
+    optionsElement.value = value;
+    optionsElement.textContent = text;
+    breedSelect.appendChild(optionsElement);
+  }
+}
+
 function onSelectView() {
   const breedId = selectedBreeds();
 
@@ -19,7 +47,7 @@ function onSelectView() {
   if (isContent) {
     clearCatContainer();
   }
-  // Show loading message
+ 
   showLoadingMessage();
 
   API.fetchCatByBreed(breedId)
@@ -27,11 +55,25 @@ function onSelectView() {
     .catch(showError)
     .finally(hideLoadingMessage);
 
-  // add is-active class for modal window
+  
   refs.container.classList.add('is-active');
 }
 
-// Getting Breed from Select
+ function showError() {
+  Notiflix.Notify.failure(
+    ' Oops! Something went wrong! Try reloading the page!'
+  );
+}
+
+
+ function showErrorFailure() {
+  Notiflix.Report.failure(
+    'Oops! Something went wrong! Try reloading the page!',
+    
+  );
+}
+
+
 function selectedBreeds() {
   const selectedValue = refs.select.options[refs.select.selectedIndex];
   const selectedText = selectedValue.textContent;
@@ -41,21 +83,20 @@ function selectedBreeds() {
   return selectedId;
 }
 
-// Create Markup
+
 function markUp(arr) {
-  //Add Img
+  
   let imgUrl = arr.map(link => link.url);
 
-  // Add Description
+ 
   let catDesc = arr.map(link => link.breeds[0].description);
 
-  // Add Temperament
+  
   let catTemp = arr.map(link => link.breeds[0].temperament);
 
   const markUp = `
   
-
-    <img class="img-cat" src="${imgUrl}" width="440" height="400" loading="lazy">
+    <img class="img-cat" src="${imgUrl}" width="500" height="400" loading="lazy">
     <div class="intro">
       <p class="cat-info"><b>Description: </b>${catDesc}</p>
       <p class="cat-info"><b>Temperament: </b>${catTemp}</p>
@@ -65,30 +106,16 @@ function markUp(arr) {
   refs.catContainer.insertAdjacentHTML('beforeend', markUp);
 }
 
-// Show loading message
 function showLoadingMessage() {
-  refs.loadingMessage.style.display = 'block';
+  refs.loading.style.display = 'block';
 }
-
-// Hide loading message
 function hideLoadingMessage() {
-  refs.loadingMessage.style.display = 'none';
+  refs.loading.style.display = 'none';
 }
-
-//Show error
-function showError() {
-  // refs.errorMessage.style.display = 'block';
-
-  Notify.failure(' Oops! Something went wrong! Try reloading the page!');
-}
-
-// Remove all childs from .cat-info
 function clearCatContainer() {
   const children = Array.from(refs.catContainer.children);
 
-  // Check every child element
   children.forEach(child => {
-    // if not a close btn
     if (child !== refs.closeButton) {
       refs.catContainer.removeChild(child);
     }
