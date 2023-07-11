@@ -6,6 +6,7 @@ const refs = {
     catContainer: document.querySelector('.cat-info'),
     loading: document.querySelector('.loader'),
     errorMessage: document.querySelector('.error'),
+    option: document.querySelector('option'),
     
 };
 
@@ -48,10 +49,17 @@ function onSelectView() {
  
   showLoadingMessage();
 
-  API.fetchCatByBreed(breedId)
+
+
+  API
+    .fetchCatByBreed(breedId)
     .then(markUp)
     .catch(showError)
     .finally(hideLoadingMessage);
+  // .fetchCatByBreed()
+  //   .then(markUp)
+  //   .catch(showError)
+  //   .finally(hideLoadingMessage);
 
   
   refs.container.classList.add('is-active');
@@ -104,9 +112,12 @@ function markUp(arr) {
 
 function showLoadingMessage() {
   refs.loading.style.display = 'block';
+  refs.option.style.display = 'none';
 }
 function hideLoadingMessage() {
   refs.loading.style.display = 'none';
+  
+
 }
 function clearCatContainer() {
   const children = Array.from(refs.catContainer.children);
